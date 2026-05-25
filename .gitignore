@@ -1,5 +1,13 @@
+# Dependency directories (never commit this)
+/node_modules/
+
+# Local environment variables and secrets (never commit this)
 .env
+.env.local
 
-/node_modules
+# Logs
+logs
+*.log
 
-package-lock.json
+# Ignore all text files (corrected syntax)
+*.txt
