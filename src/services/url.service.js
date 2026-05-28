@@ -103,5 +103,6 @@ module.exports = {
   getSingleUrl,
   deleteUrl,
   updateUrl,
+  findByShortCode,
   incrementClicks,
 };
