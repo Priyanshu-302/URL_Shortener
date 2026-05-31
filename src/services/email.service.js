@@ -1,22 +1,23 @@
-const { resend } = require("../config/resend");
+// services/email.service.js
+const nodemailer = require("nodemailer");
 
-// Send Email
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER, // your gmail
+    pass: process.env.GMAIL_APP_PASSWORD, // gmail app password (not your login password)
+  },
+});
+
 const sendEmail = async ({ to, subject, html }) => {
-  const response = await resend.emails.send({
-    from: process.env.RESEND_SENDER_EMAIL,
-
+  const info = await transporter.sendMail({
+    from: `"SecureLink" <${process.env.GMAIL_USER}>`,
     to,
-
     subject,
-
     html,
   });
-
-  console.log(response);
-
-  return response;
+  console.log("Email sent:", info.messageId);
+  return info;
 };
 
-module.exports = {
-  sendEmail,
-};
+module.exports = { sendEmail };
