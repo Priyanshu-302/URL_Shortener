@@ -9,9 +9,12 @@ const redirectRoutes = require("./routes/redirect.routes");
 
 const app = express();
 
-// Custom CORS Middleware to allow requests from frontend (localhost:5173)
+// Custom CORS Middleware to allow requests dynamically from the frontend origin
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  const origin = req.headers.origin;
+  if (origin) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");

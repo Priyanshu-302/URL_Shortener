@@ -15,7 +15,7 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
   const { showToast } = useToast();
 
   const handleCopy = async () => {
-    const fullShortUrl = `http://localhost:5000/${url.shortCode}`;
+    const fullShortUrl = `${window.location.origin}/${url.shortCode}`;
     try {
       await navigator.clipboard.writeText(fullShortUrl);
       showToast(`Copied short link: ${url.shortCode}`, "success");
