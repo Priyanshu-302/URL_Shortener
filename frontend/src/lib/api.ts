@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://url-shortener-backend-mztz.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -83,7 +83,7 @@ api.interceptors.response.use(
 
       try {
         // Direct call to avoid auth headers and interceptor loops
-        const response = await axios.post("http://localhost:5000/api/auth/refresh-token", {
+        const response = await axios.post("https://url-shortener-backend-mztz.onrender.com/api/auth/refresh-token", {
           refreshToken,
         });
 

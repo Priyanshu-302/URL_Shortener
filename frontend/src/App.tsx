@@ -47,7 +47,7 @@ const RedirectHandler: React.FC = () => {
           navigate(`/access/${shortCode}`, { replace: true });
         } else {
           // Direct public forwarder (triggers click tracking on backend)
-          window.location.href = `http://localhost:5000/${shortCode}`;
+          window.location.href = `https://url-shortener-backend-mztz.onrender.com/${shortCode}`;
         }
       } catch (err: any) {
         console.error(err);
