@@ -1,32 +1,40 @@
-const nodemailer = require("nodemailer");
-
-let transporter = null;
-
-const getTransporter = () => {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      service: "gmail",
-      port: 587,
-      secure: false,
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD ? process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, "") : "",
-      },
-    });
-  }
-  return transporter;
-};
-
 const sendEmail = async ({ to, subject, html }) => {
-  const transport = getTransporter();
-  const info = await transport.sendMail({
-    from: `"SecureLink" <${process.env.GMAIL_USER}>`,
-    to,
-    subject,
-    html,
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || "dasp98458@gmail.com";
+
+  if (!apiKey) {
+    throw new Error("BREVO_API_KEY environment variable is not defined");
+  }
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": apiKey,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      sender: {
+        name: "SecureLink",
+        email: senderEmail,
+      },
+      to: [
+        {
+          email: to,
+        },
+      ],
+      subject,
+      htmlContent: html,
+    }),
   });
-  console.log("Email sent:", info.messageId);
-  return info;
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Brevo API error: ${errorText}`);
+  }
+
+  const data = await response.json();
+  console.log("Email sent successfully via Brevo API:", data);
+  return data;
 };
 
 module.exports = { sendEmail };
