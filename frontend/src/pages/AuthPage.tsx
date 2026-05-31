@@ -73,22 +73,11 @@ export const AuthPage: React.FC = () => {
       } else {
         // Sign Up Request
         await api.post("/api/auth/signup", { name, email, password });
-        showToast("Account created successfully!", "success");
-
-        // Auto-login after successful registration
-        const loginRes = await api.post("/api/auth/login", { email, password });
-        const { safeData } = loginRes.data?.data || {};
-        if (safeData) {
-          login(
-            { _id: safeData._id, name: safeData.name, email: safeData.email },
-            safeData.accessToken,
-            safeData.refreshToken
-          );
-          navigate("/dashboard");
-        } else {
-          // If login fails, redirect to sign-in panel
-          setIsSignIn(true);
-        }
+        showToast("Account created successfully! Please sign in to continue.", "success");
+        
+        // Clear password and toggle to the Sign In tab (pre-filling the email)
+        setPassword("");
+        setIsSignIn(true);
       }
     } catch (err: any) {
       console.error(err);
