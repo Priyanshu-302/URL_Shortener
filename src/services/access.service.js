@@ -18,8 +18,8 @@ const requestAccess = async ({ shortCode, email }) => {
     throw new ApiError(400, "Url is public");
   }
 
-  // Check if the email is authorized or not
-  const isAuthorized = url.authorizedEmails.includes(email);
+  // Check if the email is authorized or not (if list is empty, anyone can request)
+  const isAuthorized = url.authorizedEmails.length === 0 || url.authorizedEmails.includes(email);
   if (!isAuthorized) {
     throw new ApiError(403, "Email not authorized");
   }
