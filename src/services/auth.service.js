@@ -6,7 +6,7 @@ const { ApiError } = require("../utils/ApiError");
 const { generateAccessToken, generateRefreshToken } = require("../utils/jwt");
 
 // Register User
-const register = asyncHandler(async ({ name, email, password }) => {
+const register = async ({ name, email, password }) => {
   // Check for existing user
   const existing = await User.findOne({ email });
   if (existing) {
@@ -24,10 +24,10 @@ const register = asyncHandler(async ({ name, email, password }) => {
   });
 
   return user;
-});
+};
 
 // Login User
-const login = asyncHandler(async ({ email, password }) => {
+const login = async ({ email, password }) => {
   // Find the user
   const user = await User.findOne({ email });
   if (!user) {
@@ -57,19 +57,19 @@ const login = asyncHandler(async ({ email, password }) => {
   });
 
   return { user, accessToken, refreshToken };
-});
+};
 
 // Logout User
-const logout = asyncHandler(async (refreshToken) => {
+const logout = async (refreshToken) => {
   await RefreshToken.findOneAndDelete({
     token: refreshToken,
   });
 
   return true;
-});
+};
 
 // Refresh access token
-const refreshAccessToken = asyncHandler(async (refreshToken) => {
+const refreshAccessToken = async (refreshToken) => {
   // Find the refresh token
   const storedToken = await RefreshToken.findOne({
     token: refreshToken,
@@ -84,7 +84,7 @@ const refreshAccessToken = asyncHandler(async (refreshToken) => {
   });
 
   return newAccessToken;
-});
+};
 
 module.exports = {
   register,

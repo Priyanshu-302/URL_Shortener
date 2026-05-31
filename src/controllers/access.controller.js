@@ -10,7 +10,7 @@ const {
 } = require("../services/access.service");
 
 // External user requesting permission for accessing the link
-const requestAccess = asyncHandler(async (req, res) => {
+const requestAccessController = asyncHandler(async (req, res, next) => {
   const { shortCode, email } = req.body;
 
   if (!shortCode || !email) {
@@ -26,7 +26,7 @@ const requestAccess = asyncHandler(async (req, res) => {
   const { randomToken } = await requestAccess({ shortCode, email });
 
   const baseUrl = process.env.CLIENT_URL?.replace(/\/$/, "");
-  const accessLink = `${baseUrl}/access/${randomToken}`;
+  const accessLink = `${baseUrl}/access/verify/${randomToken}`;
 
   const html = accessEmailTemplate({
     accessLink,
@@ -34,13 +34,14 @@ const requestAccess = asyncHandler(async (req, res) => {
   });
 
   try {
+    console.log("Sending email to:", email);
     await sendEmail({
       to: email,
       subject: "🔒 Protected Link Access Request",
       html,
     });
   } catch (error) {
-    console.error(`Email dispatch system failed: ${emailError.message}`);
+    console.error(`Email dispatch system failed: ${error.message}`);
     throw new ApiError(
       500,
       "The access email could not be delivered. Please try again later.",
@@ -59,7 +60,7 @@ const requestAccess = asyncHandler(async (req, res) => {
 });
 
 // Verify the magic link
-const verifyMagicLink = asyncHandler(async (req, res) => {
+const verifyMagicLinkController = asyncHandler(async (req, res, next) => {
   const { token } = req.params;
 
   if (!token) {
@@ -84,6 +85,6 @@ const verifyMagicLink = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  requestAccess,
-  verifyMagicLink,
+  requestAccessController,
+  verifyMagicLinkController,
 };

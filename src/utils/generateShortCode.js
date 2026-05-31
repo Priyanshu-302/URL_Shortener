@@ -1,4 +1,4 @@
-const nanoid = require("nanoid");
+const { nanoid } = require("nanoid");
 
 // Generate a short code for url shortening
 const generateShortCode = () => {

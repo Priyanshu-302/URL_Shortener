@@ -23,7 +23,7 @@ const authMiddleware = asyncHandler(async (req, res, next) => {
   const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
 
   // Find user by id
-  const user = await User.findById(decoded.id).select("-password");
+  const user = await User.findById(decoded.userId).select("-password");
 
   if (!user) {
     throw new ApiError(401, "User not found");

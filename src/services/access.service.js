@@ -6,7 +6,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
 
 // External user requesting permission for accessing the link
-const requestAccess = asyncHandler(async (shortCode, email) => {
+const requestAccess = async ({ shortCode, email }) => {
   // Find the url by short code
   const url = await ShortUrl.findOne({ shortCode });
   if (!url) {
@@ -43,10 +43,10 @@ const requestAccess = asyncHandler(async (shortCode, email) => {
     randomToken,
     url,
   };
-});
+};
 
 // Verify the magic link to provide permission of accessing the url
-const verifyMagicLink = asyncHandler(async (token) => {
+const verifyMagicLink = async (token) => {
   // Hash the random token
   const hashedToken = hashToken(token);
 
@@ -72,9 +72,13 @@ const verifyMagicLink = asyncHandler(async (token) => {
 
   // Find the Url
   const url = await ShortUrl.findById(accessToken.shortUrlId);
+  if (url) {
+    url.clicks = (url.clicks || 0) + 1;
+    await url.save();
+  }
 
   return url;
-});
+};
 
 module.exports = {
   requestAccess,

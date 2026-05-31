@@ -1,6 +1,7 @@
 const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
 const { ApiResponse } = require("../utils/ApiResponse");
+const ShortUrl = require("../models/ShortUrl");
 
 const {
   createShortUrl,
@@ -10,8 +11,8 @@ const {
 } = require("../services/url.service");
 
 // Create the short url
-const createShortUrl = asyncHandler(async (req, res) => {
-  const { originalUrl, data } = req.body;
+const createShortUrlController = asyncHandler(async (req, res, next) => {
+  const { originalUrl } = req.body;
   const userId = req.user?._id;
 
   if (!userId) {
@@ -23,8 +24,7 @@ const createShortUrl = asyncHandler(async (req, res) => {
   }
 
   const shortUrl = await createShortUrl({
-    originalUrl,
-    data,
+    ...req.body,
     owner: userId,
   });
 
@@ -33,15 +33,31 @@ const createShortUrl = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, shortUrl, "Short URL generated successfully"));
 });
 
-// Get a single url
-const getSingleUrl = asyncHandler(async (req, res) => {
+// Get all urls for the authenticated user
+const getMyUrlsController = asyncHandler(async (req, res, next) => {
   const userId = req.user?._id;
 
   if (!userId) {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const url = await getSingleUrl(userId);
+  const urls = await ShortUrl.find({ owner: userId }).sort({ createdAt: -1 });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, urls, "User URLs fetched successfully"));
+});
+
+// Get a single url
+const getSingleUrlController = asyncHandler(async (req, res, next) => {
+  const userId = req.user?._id;
+  const { id } = req.params;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const url = await ShortUrl.findOne({ _id: id, owner: userId });
 
   if (!url) {
     throw new ApiError(404, "Url not found");
@@ -53,8 +69,9 @@ const getSingleUrl = asyncHandler(async (req, res) => {
 });
 
 // Update the url
-const updateUrl = asyncHandler(async (req, res) => {
+const updateUrlController = asyncHandler(async (req, res, next) => {
   const userId = req.user?._id;
+  const { id } = req.params;
   const data = req.body;
 
   if (!userId) {
@@ -66,10 +83,14 @@ const updateUrl = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No valid fields were provided for update");
   }
 
-  const updatedUrl = await updateUrl(userId, data);
+  const updatedUrl = await ShortUrl.findOneAndUpdate(
+    { _id: id, owner: userId },
+    data,
+    { new: true }
+  );
 
   if (!updatedUrl) {
-    throw new ApiError(404, "Url not found");
+    throw new ApiError(404, "Url not found or unauthorized");
   }
 
   return res
@@ -78,17 +99,18 @@ const updateUrl = asyncHandler(async (req, res) => {
 });
 
 // Delete the url
-const deleteUrl = asyncHandler(async (req, res) => {
+const deleteUrlController = asyncHandler(async (req, res, next) => {
   const userId = req.user?._id;
+  const { id } = req.params;
 
   if (!userId) {
     throw new ApiError(401, "Unauthorized");
   }
 
-  const deletionState = await deleteUrl(userId);
+  const deletionState = await ShortUrl.deleteOne({ _id: id, owner: userId });
 
-  if (!deletionState) {
-    throw new ApiError(404, "Url not found");
+  if (deletionState.deletedCount === 0) {
+    throw new ApiError(404, "Url not found or unauthorized");
   }
 
   return res
@@ -96,9 +118,38 @@ const deleteUrl = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, null, "URL deleted successfully"));
 });
 
+// Check if short code exists and is protected (used by frontend router)
+const checkShortCodeController = asyncHandler(async (req, res, next) => {
+  const { shortCode } = req.params;
+
+  if (!shortCode) {
+    throw new ApiError(400, "Short code is required");
+  }
+
+  const url = await ShortUrl.findOne({ shortCode });
+
+  if (!url) {
+    throw new ApiError(404, "URL not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        shortCode: url.shortCode,
+        isProtected: url.isProtected,
+        originalUrl: url.isProtected ? null : url.originalUrl,
+      },
+      "URL state verified"
+    )
+  );
+});
+
 module.exports = {
-  createShortUrl,
-  getSingleUrl,
-  updateUrl,
-  deleteUrl,
+  createShortUrlController,
+  getSingleUrlController,
+  updateUrlController,
+  deleteUrlController,
+  getMyUrlsController,
+  checkShortCodeController,
 };

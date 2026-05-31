@@ -5,7 +5,7 @@ const { ApiResponse } = require("../utils/ApiResponse");
 const { findByShortCode, incrementClicks } = require("../services/url.service");
 
 // Redirect to original url
-const redirectToOriginal = asyncHandler(async (req, res) => {
+const redirectToOriginalController = asyncHandler(async (req, res, next) => {
   const shortCode = req.params.shortCode;
 
   if (!shortCode) {
@@ -19,15 +19,11 @@ const redirectToOriginal = asyncHandler(async (req, res) => {
   }
 
   if (url.isProtected) {
-    return res.status(200).json({
-      success: true,
-      isProtected: true,
-      message:
-        "This link is locked. Magic link email verification is required to gain entry.",
-    });
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    return res.redirect(`${clientUrl}/access/${shortCode}`);
   }
 
-  incrementClickCount(shortCode).catch((error) => {
+  incrementClicks(shortCode).catch((error) => {
     console.error(
       `Background analytics tracking failed for code [${shortCode}]:`,
       error.message,
@@ -38,5 +34,5 @@ const redirectToOriginal = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  redirectToOriginal,
+  redirectToOriginalController,
 };

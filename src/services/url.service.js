@@ -4,30 +4,34 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
 
 // Create the short url
-const createShortUrl = asyncHandler(
-  async ({ originalUrl, owner, isProtected, authorizedEmails, expiresAt }) => {
-    let shortCode = generateShortCode();
+const createShortUrl = async ({
+  originalUrl,
+  owner,
+  isProtected,
+  authorizedEmails,
+  expiresAt,
+}) => {
+  let shortCode = generateShortCode();
 
-    let existingCode = await ShortUrl.findOne({ shortCode });
-    if (existingCode) {
-      throw new ApiError(400, "Short code already exists");
-    }
+  let existingCode = await ShortUrl.findOne({ shortCode });
+  if (existingCode) {
+    throw new ApiError(400, "Short code already exists");
+  }
 
-    const shortUrl = await ShortUrl.create({
-      originalUrl,
-      shortCode,
-      owner,
-      isProtected,
-      authorizedEmails,
-      expiresAt,
-    });
+  const shortUrl = await ShortUrl.create({
+    originalUrl,
+    shortCode,
+    owner,
+    isProtected,
+    authorizedEmails,
+    expiresAt,
+  });
 
-    return shortUrl;
-  },
-);
+  return shortUrl;
+};
 
 // Get single url
-const getSingleUrl = asyncHandler(async (userId) => {
+const getSingleUrl = async (userId) => {
   const url = await ShortUrl.findOne({
     owner: userId,
   });
@@ -37,10 +41,10 @@ const getSingleUrl = asyncHandler(async (userId) => {
   }
 
   return url;
-});
+};
 
 // Delete url
-const deleteUrl = asyncHandler(async (userId) => {
+const deleteUrl = async (userId) => {
   // Delete the url
   const url = await ShortUrl.deleteOne({ owner: userId });
 
@@ -49,10 +53,10 @@ const deleteUrl = asyncHandler(async (userId) => {
   }
 
   return url;
-});
+};
 
 // Update url
-const updateUrl = asyncHandler(async (userId, data) => {
+const updateUrl = async (userId, data) => {
   // Update the url
   const url = await ShortUrl.findOneAndUpdate(
     {
@@ -67,10 +71,10 @@ const updateUrl = asyncHandler(async (userId, data) => {
   }
 
   return url;
-});
+};
 
 // Find by short code
-const findByShortCode = asyncHandler(async (shortCode) => {
+const findByShortCode = async (shortCode) => {
   // Find the url by short code
   const url = await ShortUrl.findOne({
     shortCode,
@@ -81,10 +85,10 @@ const findByShortCode = asyncHandler(async (shortCode) => {
   }
 
   return url;
-}) 
+};
 
 // Increment clicks to 1 to make sure that it is used and corrupted
-const incrementClicks = asyncHandler(async (shortCode) => {
+const incrementClicks = async (shortCode) => {
   // Update the clicks to 1 using aggregate pipeline
   const url = await ShortUrl.findOneAndUpdate(
     {
@@ -96,7 +100,7 @@ const incrementClicks = asyncHandler(async (shortCode) => {
       },
     },
   );
-});
+};
 
 module.exports = {
   createShortUrl,
