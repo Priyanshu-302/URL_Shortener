@@ -10,6 +10,8 @@ export interface UrlItem {
   authorizedEmails: string[];
   clicks: number;
   expiresAt: string | null;
+  maxClicks: number | null;
+  selfDestruct: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,7 +33,14 @@ export const useCreateUrl = () => {
   return useMutation<
     UrlItem,
     Error,
-    { originalUrl: string; isProtected: boolean; authorizedEmails?: string[] }
+    {
+      originalUrl: string;
+      isProtected: boolean;
+      authorizedEmails?: string[];
+      expiresAt?: string | null;
+      maxClicks?: number | null;
+      selfDestruct?: boolean;
+    }
   >({
     mutationFn: async (data) => {
       const response = await api.post("/api/url/create", data);
@@ -49,7 +58,15 @@ export const useUpdateUrl = () => {
   return useMutation<
     UrlItem,
     Error,
-    { id: string; originalUrl: string; isProtected: boolean; authorizedEmails?: string[] }
+    {
+      id: string;
+      originalUrl: string;
+      isProtected: boolean;
+      authorizedEmails?: string[];
+      expiresAt?: string | null;
+      maxClicks?: number | null;
+      selfDestruct?: boolean;
+    }
   >({
     mutationFn: async ({ id, ...data }) => {
       const response = await api.patch(`/api/url/${id}`, data);

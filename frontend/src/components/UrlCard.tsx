@@ -30,6 +30,11 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
     year: "numeric",
   });
 
+  const isExpired = url.expiresAt && new Date() > new Date(url.expiresAt);
+  const isLimitReached = typeof url.maxClicks === "number" && url.clicks >= url.maxClicks;
+  const isSelfDestructed = url.selfDestruct && url.clicks >= 1;
+  const isSelfDestructActive = url.selfDestruct && url.clicks === 0;
+
   return (
     <motion.div
       layout
@@ -63,6 +68,28 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
                 Public
               </span>
             )}
+
+            {/* Status Badges */}
+            {isExpired && (
+              <span className="flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 border border-red-100 rounded-xl text-xs font-semibold animate-pulse">
+                Expired
+              </span>
+            )}
+            {isLimitReached && !isExpired && (
+              <span className="flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 border border-red-100 rounded-xl text-xs font-semibold">
+                Limit Reached
+              </span>
+            )}
+            {isSelfDestructed && (
+              <span className="flex items-center gap-1 px-3 py-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-xl text-xs font-semibold">
+                Self-Destructed
+              </span>
+            )}
+            {isSelfDestructActive && (
+              <span className="flex items-center gap-1 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-xl text-xs font-semibold">
+                Self-Destruct
+              </span>
+            )}
           </div>
 
           {/* Original URL */}
@@ -87,12 +114,32 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
           <div className="flex items-center gap-4 text-gray-500 text-sm">
             <div className="flex items-center gap-1.5" title={`${url.clicks} clicks`}>
               <BarChart3 className="w-4 h-4 text-gray-400" />
-              <span className="font-semibold text-gray-700">{url.clicks}</span>
+              <span className="font-semibold text-gray-700">
+                {url.clicks}
+                {typeof url.maxClicks === "number" && ` / ${url.maxClicks}`}
+              </span>
               <span className="text-xs text-gray-400">clicks</span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-gray-400">
-              <Calendar className="w-3.5 h-3.5" />
-              <span>{formattedDate}</span>
+            
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                <Calendar className="w-3.5 h-3.5" />
+                <span>Created: {formattedDate}</span>
+              </div>
+              
+              {url.expiresAt && (
+                <div className="flex items-center gap-1.5 text-xs text-red-500" title="Expiration date">
+                  <Calendar className="w-3.5 h-3.5 text-red-400" />
+                  <span>
+                    Expires: {new Date(url.expiresAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

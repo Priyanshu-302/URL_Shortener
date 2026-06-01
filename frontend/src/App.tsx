@@ -35,6 +35,7 @@ const RedirectHandler: React.FC = () => {
   const { showToast } = useToast();
   const [status, setStatus] = useState<"checking" | "error">("checking");
   const [errorMsg, setErrorMsg] = useState("");
+  const [errorTitle, setErrorTitle] = useState("Link Not Found");
 
   useEffect(() => {
     const checkCode = async () => {
@@ -52,6 +53,11 @@ const RedirectHandler: React.FC = () => {
       } catch (err: any) {
         console.error(err);
         setStatus("error");
+        if (err.response?.status === 410) {
+          setErrorTitle("Link Expired / Inactive");
+        } else {
+          setErrorTitle("Link Not Found");
+        }
         setErrorMsg(err.response?.data?.message || "This shortened link is invalid or has expired.");
         showToast("Failed to fetch link details.", "error");
       }
@@ -78,7 +84,7 @@ const RedirectHandler: React.FC = () => {
           <ShieldAlert className="w-10 h-10" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight font-sans">Link Not Found</h2>
+          <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight font-sans">{errorTitle}</h2>
           <p className="text-sm text-red-600 bg-red-50 border border-red-100 py-2 px-3 rounded-xl max-w-xs mx-auto leading-relaxed break-words font-medium">
             {errorMsg}
           </p>

@@ -20,7 +20,23 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
   const [isProtected, setIsProtected] = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [authorizedEmails, setAuthorizedEmails] = useState<string[]>([]);
+  const [expiresAt, setExpiresAt] = useState("");
+  const [maxClicks, setMaxClicks] = useState("");
+  const [selfDestruct, setSelfDestruct] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [errors, setErrors] = useState<{ originalUrl?: string; emails?: string }>({});
+
+  const formatDateTimeLocal = (isoString?: string | null) => {
+    if (!isoString) return "";
+    try {
+      const date = new Date(isoString);
+      const tzoffset = date.getTimezoneOffset() * 60000;
+      const localISOTime = (new Date(date.getTime() - tzoffset)).toISOString().slice(0, 16);
+      return localISOTime;
+    } catch (e) {
+      return "";
+    }
+  };
 
   const isEditMode = !!editData;
 
@@ -30,10 +46,18 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
         setOriginalUrl(editData.originalUrl);
         setIsProtected(editData.isProtected);
         setAuthorizedEmails(editData.authorizedEmails || []);
+        setExpiresAt(formatDateTimeLocal(editData.expiresAt));
+        setMaxClicks(editData.maxClicks ? String(editData.maxClicks) : "");
+        setSelfDestruct(editData.selfDestruct || false);
+        setShowAdvanced(!!editData.expiresAt || !!editData.maxClicks || !!editData.selfDestruct);
       } else {
         setOriginalUrl("");
         setIsProtected(false);
         setAuthorizedEmails([]);
+        setExpiresAt("");
+        setMaxClicks("");
+        setSelfDestruct(false);
+        setShowAdvanced(false);
       }
       setEmailInput("");
       setErrors({});
@@ -82,6 +106,9 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
       originalUrl,
       isProtected,
       authorizedEmails,
+      expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
+      maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
+      selfDestruct,
     };
 
     // Run Zod validation
@@ -105,6 +132,9 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
           originalUrl,
           isProtected,
           authorizedEmails,
+          expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
+          maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
+          selfDestruct,
         });
         showToast("URL updated successfully", "success");
       } else {
@@ -278,6 +308,83 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Collapsible Advanced Settings */}
+              <div className="border-t border-gray-100 pt-4 space-y-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                  className="flex items-center justify-between w-full text-left text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  <span>Advanced Settings (Expiry & Limits)</span>
+                  <span className="text-xs text-[#7C3AED] hover:underline font-bold">
+                    {showAdvanced ? "Hide options" : "Show options"}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {showAdvanced && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden space-y-4 pt-1"
+                    >
+                      {/* Expiration Date/Time */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-gray-700">Link Expiration Date & Time</label>
+                        <input
+                          type="datetime-local"
+                          value={expiresAt}
+                          onChange={(e) => setExpiresAt(e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#7C3AED] outline-none text-gray-900 placeholder:text-gray-400 transition-all text-sm"
+                          disabled={isSubmitting}
+                        />
+                        <p className="text-[11px] text-gray-400">Leave blank for infinite lifetime.</p>
+                      </div>
+
+                      {/* Click Limit */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-gray-700">Maximum Click Limit</label>
+                        <input
+                          type="number"
+                          min="1"
+                          placeholder="e.g. 5"
+                          value={maxClicks}
+                          onChange={(e) => setMaxClicks(e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#7C3AED] outline-none text-gray-900 placeholder:text-gray-400 transition-all text-sm"
+                          disabled={isSubmitting}
+                        />
+                        <p className="text-[11px] text-gray-400">The link will deactivate after reaching this count.</p>
+                      </div>
+
+                      {/* Self-Destruct Toggle */}
+                      <div className="flex items-center justify-between p-3.5 bg-amber-50/50 rounded-xl border border-amber-100">
+                        <div className="space-y-0.5 pr-4">
+                          <span className="text-xs font-bold text-amber-900">Self-Destruct Link</span>
+                          <p className="text-[11px] text-amber-600 leading-normal">
+                            Deactivate this link automatically after the first successful access.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSelfDestruct(!selfDestruct)}
+                          className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                            selfDestruct ? "bg-amber-600" : "bg-gray-200"
+                          }`}
+                          disabled={isSubmitting}
+                        >
+                          <span
+                            className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                              selfDestruct ? "translate-x-4" : "translate-x-0"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Submit Buttons */}
               <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">

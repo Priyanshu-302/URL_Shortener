@@ -15,6 +15,9 @@ export const createUrlSchema = z.object({
   originalUrl: z.string().url("Please enter a valid URL (e.g. https://example.com)"),
   isProtected: z.boolean().default(false),
   authorizedEmails: z.array(z.string().email("Invalid email address")).default([]),
+  expiresAt: z.string().nullable().optional(),
+  maxClicks: z.number().nullable().optional(),
+  selfDestruct: z.boolean().default(false),
 });
 
 export const requestAccessSchema = z.object({

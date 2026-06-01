@@ -10,6 +10,8 @@ const createShortUrl = async ({
   isProtected,
   authorizedEmails,
   expiresAt,
+  maxClicks,
+  selfDestruct,
 }) => {
   let shortCode = generateShortCode();
 
@@ -25,6 +27,8 @@ const createShortUrl = async ({
     isProtected,
     authorizedEmails,
     expiresAt,
+    maxClicks,
+    selfDestruct,
   });
 
   return shortUrl;

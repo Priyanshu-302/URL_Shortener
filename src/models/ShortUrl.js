@@ -34,9 +34,17 @@ const urlSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    maxClicks: {
+      type: Number,
+      default: null,
+    },
     expiresAt: {
       type: Date,
       default: null,
+    },
+    selfDestruct: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },

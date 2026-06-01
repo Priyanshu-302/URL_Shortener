@@ -4,6 +4,7 @@ const { generateRandomToken } = require("../utils/generateToken");
 const { hashToken } = require("../utils/hashToken");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
+const { isUrlExpired } = require("../utils/checkExpiry");
 
 // External user requesting permission for accessing the link
 const requestAccess = async ({ shortCode, email }) => {
@@ -72,10 +73,17 @@ const verifyMagicLink = async (token) => {
 
   // Find the Url
   const url = await ShortUrl.findById(accessToken.shortUrlId);
-  if (url) {
-    url.clicks = (url.clicks || 0) + 1;
-    await url.save();
+  if (!url) {
+    throw new ApiError(404, "Url not found");
   }
+
+  const validation = isUrlExpired(url);
+  if (validation.expired) {
+    throw new ApiError(410, validation.reason);
+  }
+
+  url.clicks = (url.clicks || 0) + 1;
+  await url.save();
 
   return url;
 };

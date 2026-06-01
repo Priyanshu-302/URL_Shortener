@@ -1,8 +1,7 @@
 const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
-const { ApiResponse } = require("../utils/ApiResponse");
-
 const { findByShortCode, incrementClicks } = require("../services/url.service");
+const { isUrlExpired } = require("../utils/checkExpiry");
 
 // Redirect to original url
 const redirectToOriginalController = asyncHandler(async (req, res, next) => {
@@ -16,6 +15,13 @@ const redirectToOriginalController = asyncHandler(async (req, res, next) => {
 
   if (!url) {
     throw new ApiError(404, "Url not found");
+  }
+
+  // Check if link has expired
+  const validation = isUrlExpired(url);
+  if (validation.expired) {
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    return res.redirect(`${clientUrl}/${shortCode}`);
   }
 
   if (url.isProtected) {

@@ -2,6 +2,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
 const { ApiResponse } = require("../utils/ApiResponse");
 const ShortUrl = require("../models/ShortUrl");
+const { isUrlExpired } = require("../utils/checkExpiry");
 
 const {
   createShortUrl,
@@ -130,6 +131,11 @@ const checkShortCodeController = asyncHandler(async (req, res, next) => {
 
   if (!url) {
     throw new ApiError(404, "URL not found");
+  }
+
+  const validation = isUrlExpired(url);
+  if (validation.expired) {
+    throw new ApiError(410, validation.reason);
   }
 
   return res.status(200).json(
