@@ -7,12 +7,14 @@ const {
   deleteUrlController,
   getMyUrlsController,
   checkShortCodeController,
+  verifyPasswordController,
 } = require("../controllers/url.controller");
 
 const { authMiddleware } = require("../middlewares/auth.middleware");
 
 // Public route to check if shortCode exists and isProtected (no auth header needed)
 router.get("/check/:shortCode", checkShortCodeController);
+router.post("/verify-password", verifyPasswordController);
 
 // All routes below require authorization
 router.use(authMiddleware);

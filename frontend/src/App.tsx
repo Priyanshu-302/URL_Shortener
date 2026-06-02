@@ -6,6 +6,7 @@ import { AuthPage } from "./pages/AuthPage";
 import { Dashboard } from "./pages/Dashboard";
 import { RequestAccess } from "./pages/RequestAccess";
 import { VerifyAccess } from "./pages/VerifyAccess";
+import { VerifyPassword } from "./pages/VerifyPassword";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useToast } from "./components/Toast";
@@ -41,9 +42,12 @@ const RedirectHandler: React.FC = () => {
     const checkCode = async () => {
       try {
         const response = await api.get(`/api/url/check/${shortCode}`);
-        const { isProtected } = response.data?.data || {};
+        const { isProtected, isPasswordProtected } = response.data?.data || {};
 
-        if (isProtected) {
+        if (isPasswordProtected) {
+          // Redirect to password entry page
+          navigate(`/password/${shortCode}`, { replace: true });
+        } else if (isProtected) {
           // Redirect to access request email portal
           navigate(`/access/${shortCode}`, { replace: true });
         } else {
@@ -167,6 +171,16 @@ export default function App() {
             element={
               <PageTransition>
                 <VerifyAccess />
+              </PageTransition>
+            }
+          />
+
+          {/* Password verification gate */}
+          <Route
+            path="/password/:shortCode"
+            element={
+              <PageTransition>
+                <VerifyPassword />
               </PageTransition>
             }
           />

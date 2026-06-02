@@ -12,6 +12,7 @@ export interface UrlItem {
   expiresAt: string | null;
   maxClicks: number | null;
   selfDestruct: boolean;
+  password?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,6 +41,7 @@ export const useCreateUrl = () => {
       expiresAt?: string | null;
       maxClicks?: number | null;
       selfDestruct?: boolean;
+      password?: string | null;
     }
   >({
     mutationFn: async (data) => {
@@ -66,6 +68,7 @@ export const useUpdateUrl = () => {
       expiresAt?: string | null;
       maxClicks?: number | null;
       selfDestruct?: boolean;
+      password?: string | null;
     }
   >({
     mutationFn: async ({ id, ...data }) => {

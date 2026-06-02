@@ -2,7 +2,7 @@ import React from "react";
 import { type UrlItem } from "../hooks/useUrls";
 import { useToast } from "./Toast";
 import { motion } from "framer-motion";
-import { Calendar, Copy, Edit, Trash, Lock, Globe, ExternalLink, BarChart3 } from "lucide-react";
+import { Calendar, Copy, Edit, Trash, Lock, Globe, ExternalLink, BarChart3, KeyRound } from "lucide-react";
 
 interface UrlCardProps {
   url: UrlItem;
@@ -66,6 +66,13 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
               <span className="flex items-center gap-1 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl text-xs font-semibold">
                 <Globe className="w-3 h-3" />
                 Public
+              </span>
+            )}
+
+            {url.password && (
+              <span className="flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-xl text-xs font-semibold" title="Password locked">
+                <KeyRound className="w-3 h-3" />
+                Password Locked
               </span>
             )}
 

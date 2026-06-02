@@ -18,6 +18,7 @@ export const createUrlSchema = z.object({
   expiresAt: z.string().nullable().optional(),
   maxClicks: z.number().nullable().optional(),
   selfDestruct: z.boolean().default(false),
+  password: z.string().nullable().optional(),
 });
 
 export const requestAccessSchema = z.object({

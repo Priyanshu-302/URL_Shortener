@@ -25,7 +25,7 @@ const requestAccessController = asyncHandler(async (req, res, next) => {
 
   const { randomToken } = await requestAccess({ shortCode, email });
 
-  const baseUrl = process.env.CLIENT_URL?.replace(/\/$/, "");
+  const baseUrl = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/$/, "");
   const accessLink = `${baseUrl}/access/verify/${randomToken}`;
 
   const html = accessEmailTemplate({

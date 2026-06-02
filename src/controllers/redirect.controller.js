@@ -29,6 +29,11 @@ const redirectToOriginalController = asyncHandler(async (req, res, next) => {
     return res.redirect(`${clientUrl}/access/${shortCode}`);
   }
 
+  if (url.password) {
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    return res.redirect(`${clientUrl}/password/${shortCode}`);
+  }
+
   incrementClicks(shortCode).catch((error) => {
     console.error(
       `Background analytics tracking failed for code [${shortCode}]:`,

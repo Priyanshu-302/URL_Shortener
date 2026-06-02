@@ -3,6 +3,7 @@ const { ApiError } = require("../utils/ApiError");
 const { ApiResponse } = require("../utils/ApiResponse");
 const ShortUrl = require("../models/ShortUrl");
 const { isUrlExpired } = require("../utils/checkExpiry");
+const bcrypt = require("bcrypt");
 
 const {
   createShortUrl,
@@ -84,10 +85,14 @@ const updateUrlController = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "No valid fields were provided for update");
   }
 
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+
   const updatedUrl = await ShortUrl.findOneAndUpdate(
     { _id: id, owner: userId },
     data,
-    { new: true }
+    { new: true },
   );
 
   if (!updatedUrl) {
@@ -144,11 +149,44 @@ const checkShortCodeController = asyncHandler(async (req, res, next) => {
       {
         shortCode: url.shortCode,
         isProtected: url.isProtected,
-        originalUrl: url.isProtected ? null : url.originalUrl,
+        isPasswordProtected: !!url.password,
+        originalUrl: url.isProtected || url.password ? null : url.originalUrl,
       },
-      "URL state verified"
-    )
+      "URL state verified",
+    ),
   );
+});
+
+// Password verification controller
+const verifyPasswordController = asyncHandler(async (req, res, next) => {
+  const { shortCode, password } = req.body;
+
+  if (!shortCode || !password) {
+    throw new ApiError(400, "Shortcode and password are required");
+  }
+  const url = await ShortUrl.findOne({ shortCode });
+  if (!url) {
+    throw new ApiError(404, "Link not found");
+  }
+
+  const validation = isUrlExpired(url);
+  if (validation.expired) {
+    throw new ApiError(410, validation.reason);
+  }
+
+  const isMatch = await bcrypt.compare(password, url.password);
+  if (!isMatch) {
+    throw new ApiError(401, "Incorrect password");
+  }
+
+  // Increment click count
+  url.clicks = (url.clicks || 0) + 1;
+  await url.save();
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, { redirectUrl: url.originalUrl }, "Access granted"),
+    );
 });
 
 module.exports = {
@@ -158,4 +196,5 @@ module.exports = {
   deleteUrlController,
   getMyUrlsController,
   checkShortCodeController,
+  verifyPasswordController,
 };

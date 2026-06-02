@@ -23,6 +23,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
   const [expiresAt, setExpiresAt] = useState("");
   const [maxClicks, setMaxClicks] = useState("");
   const [selfDestruct, setSelfDestruct] = useState(false);
+  const [password, setPassword] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [errors, setErrors] = useState<{ originalUrl?: string; emails?: string }>({});
 
@@ -49,7 +50,13 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
         setExpiresAt(formatDateTimeLocal(editData.expiresAt));
         setMaxClicks(editData.maxClicks ? String(editData.maxClicks) : "");
         setSelfDestruct(editData.selfDestruct || false);
-        setShowAdvanced(!!editData.expiresAt || !!editData.maxClicks || !!editData.selfDestruct);
+        setPassword(editData.password ? "••••••••" : "");
+        setShowAdvanced(
+          !!editData.expiresAt || 
+          !!editData.maxClicks || 
+          !!editData.selfDestruct || 
+          !!editData.password
+        );
       } else {
         setOriginalUrl("");
         setIsProtected(false);
@@ -57,6 +64,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
         setExpiresAt("");
         setMaxClicks("");
         setSelfDestruct(false);
+        setPassword("");
         setShowAdvanced(false);
       }
       setEmailInput("");
@@ -102,6 +110,19 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
     e.preventDefault();
     setErrors({});
 
+    // Determine password payload for database update
+    let passwordPayload: string | null | undefined = undefined;
+    if (isEditMode) {
+      if (password === "") {
+        passwordPayload = null; // Clear password lock
+      } else if (password !== "••••••••") {
+        passwordPayload = password; // Set new password
+      }
+      // If password === "••••••••", it remains undefined so it won't be sent/modified in PATCH
+    } else {
+      passwordPayload = password || null; // Create mode
+    }
+
     const formData = {
       originalUrl,
       isProtected,
@@ -109,6 +130,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
       expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
       maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
       selfDestruct,
+      password: passwordPayload,
     };
 
     // Run Zod validation
@@ -135,6 +157,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
           expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
           maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
           selfDestruct,
+          password: passwordPayload,
         });
         showToast("URL updated successfully", "success");
       } else {
@@ -356,6 +379,27 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
                           disabled={isSubmitting}
                         />
                         <p className="text-[11px] text-gray-400">The link will deactivate after reaching this count.</p>
+                      </div>
+
+                      {/* Password Protection */}
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold text-gray-700">Password Lock</label>
+                        <input
+                          type="text"
+                          placeholder="Type password (leave blank for no lock)"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#7C3AED] outline-none text-gray-900 placeholder:text-gray-400 transition-all text-sm font-sans"
+                          disabled={isSubmitting}
+                        />
+                        {isEditMode && editData?.password && (
+                          <p className="text-[11px] text-purple-600 font-medium">
+                            Lock is active. Clear input to remove, or type to set a new password.
+                          </p>
+                        )}
+                        {(!isEditMode || !editData?.password) && (
+                          <p className="text-[11px] text-gray-400">Forces visitors to enter this passcode before redirecting.</p>
+                        )}
                       </div>
 
                       {/* Self-Destruct Toggle */}

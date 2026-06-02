@@ -2,6 +2,7 @@ const ShortUrl = require("../models/ShortUrl");
 const { generateShortCode } = require("../utils/generateShortCode");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { ApiError } = require("../utils/ApiError");
+const bcrypt = require("bcrypt");
 
 // Create the short url
 const createShortUrl = async ({
@@ -12,12 +13,18 @@ const createShortUrl = async ({
   expiresAt,
   maxClicks,
   selfDestruct,
+  password,
 }) => {
   let shortCode = generateShortCode();
 
   let existingCode = await ShortUrl.findOne({ shortCode });
   if (existingCode) {
     throw new ApiError(400, "Short code already exists");
+  }
+
+  let hashedPassword = null;
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
   }
 
   const shortUrl = await ShortUrl.create({
@@ -29,6 +36,7 @@ const createShortUrl = async ({
     expiresAt,
     maxClicks,
     selfDestruct,
+    password: hashedPassword,
   });
 
   return shortUrl;
