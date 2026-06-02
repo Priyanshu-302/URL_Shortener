@@ -10,7 +10,10 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isWhiteNavbar = location.pathname === "/dashboard" || location.pathname === "/profile";
+  const isWhiteNavbar = 
+    location.pathname === "/dashboard" || 
+    location.pathname === "/profile" || 
+    location.pathname === "/bio-builder";
 
   const handleLogout = async () => {
     await logout();
