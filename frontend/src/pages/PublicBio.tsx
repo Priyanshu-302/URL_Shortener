@@ -252,6 +252,8 @@ export const PublicBio: React.FC = () => {
                 <motion.div key={link._id} variants={itemVariants}>
                   <a
                     href={fullShortUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={`w-full py-3.5 px-5 rounded-2xl flex items-center justify-between text-sm transition-all duration-300 group hover:scale-[1.02] ${themes.buttonBg}`}
                   >
                     <div className="flex items-center gap-2 truncate pr-4">

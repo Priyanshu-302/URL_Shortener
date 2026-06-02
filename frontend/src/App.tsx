@@ -58,7 +58,7 @@ const RedirectHandler: React.FC = () => {
           const apiBaseUrl = import.meta.env.VITE_API_URL || (isLocal ? "http://localhost:5000/" : "https://url-shortener-backend-mztz.onrender.com/");
           // Ensure trailing slash is handled
           const baseUrlNormalized = apiBaseUrl.endsWith("/") ? apiBaseUrl : `${apiBaseUrl}/`;
-          window.location.href = `${baseUrlNormalized}${shortCode}`;
+          window.location.replace(`${baseUrlNormalized}${shortCode}`);
         }
       } catch (err: any) {
         console.error(err);
