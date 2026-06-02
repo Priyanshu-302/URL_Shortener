@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navbar } from "../components/Navbar";
 import { UrlCard } from "../components/UrlCard";
 import { CreateUrlModal } from "../components/CreateUrlModal";
+import { QrCodeModal } from "../components/QrCodeModal";
 import { useUrls, useDeleteUrl, type UrlItem } from "../hooks/useUrls";
 import { useToast } from "../components/Toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,6 +48,7 @@ export const Dashboard: React.FC = () => {
   const [filterType, setFilterType] = useState<"all" | "public" | "protected">("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUrl, setEditingUrl] = useState<UrlItem | null>(null);
+  const [activeQrUrl, setActiveQrUrl] = useState<UrlItem | null>(null);
 
   // Stats derivation
   const totalUrls = urls.length;
@@ -301,6 +303,7 @@ export const Dashboard: React.FC = () => {
                     url={url}
                     onEdit={handleEditClick}
                     onDelete={handleDelete}
+                    onQrCode={setActiveQrUrl}
                     isDeleting={deleteMutation.isPending}
                   />
                 </motion.div>
@@ -326,6 +329,12 @@ export const Dashboard: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         editData={editingUrl}
+      />
+
+      {/* QR Code Modal Dialog */}
+      <QrCodeModal
+        urlItem={activeQrUrl}
+        onClose={() => setActiveQrUrl(null)}
       />
     </div>
   );

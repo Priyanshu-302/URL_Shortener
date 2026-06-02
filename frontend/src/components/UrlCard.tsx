@@ -2,16 +2,17 @@ import React from "react";
 import { type UrlItem } from "../hooks/useUrls";
 import { useToast } from "./Toast";
 import { motion } from "framer-motion";
-import { Calendar, Copy, Edit, Trash, Lock, Globe, ExternalLink, BarChart3, KeyRound } from "lucide-react";
+import { Calendar, Copy, Edit, Trash, Lock, Globe, ExternalLink, BarChart3, KeyRound, QrCode } from "lucide-react";
 
 interface UrlCardProps {
   url: UrlItem;
   onEdit: (url: UrlItem) => void;
   onDelete: (id: string) => void;
+  onQrCode: (url: UrlItem) => void;
   isDeleting?: boolean;
 }
 
-export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDeleting }) => {
+export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, onQrCode, isDeleting }) => {
   const { showToast } = useToast();
 
   const handleCopy = async () => {
@@ -152,6 +153,14 @@ export const UrlCard: React.FC<UrlCardProps> = ({ url, onEdit, onDelete, isDelet
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onQrCode(url)}
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-50 border border-gray-100 rounded-xl transition-colors"
+              title="Generate QR Code"
+            >
+              <QrCode className="w-4 h-4" />
+            </motion.button>
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => onEdit(url)}
