@@ -6,6 +6,7 @@ const accessRoutes = require("./routes/access.routes");
 const urlRoutes = require("./routes/url.routes");
 const authRoutes = require("./routes/auth.routes");
 const redirectRoutes = require("./routes/redirect.routes");
+const bioRoutes = require("./routes/bio.routes");
 
 const app = express();
 
@@ -33,6 +34,7 @@ connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api/access", accessRoutes);
 app.use("/api/url", urlRoutes);
+app.use("/api/bio", bioRoutes);
 app.use("/", redirectRoutes);
 
 // Health Check

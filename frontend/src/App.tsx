@@ -8,6 +8,8 @@ import { RequestAccess } from "./pages/RequestAccess";
 import { VerifyAccess } from "./pages/VerifyAccess";
 import { VerifyPassword } from "./pages/VerifyPassword";
 import { ProfilePage } from "./pages/ProfilePage";
+import { BioBuilder } from "./pages/BioBuilder";
+import { PublicBio } from "./pages/PublicBio";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useToast } from "./components/Toast";
 import api from "./lib/api";
@@ -181,6 +183,28 @@ export default function App() {
             element={
               <PageTransition>
                 <VerifyPassword />
+              </PageTransition>
+            }
+          />
+
+          {/* Bio Page Builder Studio */}
+          <Route
+            path="/bio-builder"
+            element={
+              <ProtectedRoute>
+                <PageTransition>
+                  <BioBuilder />
+                </PageTransition>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Public Bio Page */}
+          <Route
+            path="/bio/:username"
+            element={
+              <PageTransition>
+                <PublicBio />
               </PageTransition>
             }
           />

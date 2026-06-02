@@ -55,6 +55,18 @@ export const Navbar: React.FC = () => {
                 >
                   Dashboard
                 </Link>
+                <Link
+                  to="/bio-builder"
+                  className={`text-sm font-medium transition-colors ${
+                    location.pathname === "/bio-builder"
+                      ? "text-[#7C3AED] bg-[#7C3AED]/5 px-4 py-2 rounded-xl font-bold" 
+                      : isWhiteNavbar
+                      ? "text-gray-500 hover:text-gray-900"
+                      : "text-gray-300 hover:text-white"
+                  }`}
+                >
+                  Bio Page
+                </Link>
                 {/* Profile Badge Link */}
                 <Link
                   to="/profile"
@@ -153,6 +165,19 @@ export const Navbar: React.FC = () => {
                     }`}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    to="/bio-builder"
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-4 py-2 rounded-xl text-sm font-medium ${
+                      location.pathname === "/bio-builder"
+                        ? "text-[#7C3AED] bg-[#7C3AED]/5 font-bold"
+                        : isWhiteNavbar
+                        ? "hover:bg-gray-50 text-gray-700"
+                        : "hover:bg-white/5 text-gray-300"
+                    }`}
+                  >
+                    Bio Page
                   </Link>
                   <button
                     onClick={() => {
