@@ -103,6 +103,14 @@ export const QrCodeModal: React.FC<QrCodeModalProps> = ({ urlItem, onClose }) =>
               fgColor={fgColor}
               level={"H"}
               includeMargin={true}
+              imageSettings={{
+                src: "/favicon.svg",
+                x: undefined,
+                y: undefined,
+                height: 38,
+                width: 38,
+                excavate: true,
+              }}
             />
           </div>
 
