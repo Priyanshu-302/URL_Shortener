@@ -1,7 +1,15 @@
 import axios from "axios";
 
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  return isLocal ? "http://localhost:5000/" : "https://url-shortener-backend-mztz.onrender.com/";
+};
+
 const api = axios.create({
-  baseURL: "https://url-shortener-backend-mztz.onrender.com/",
+  baseURL: getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },
@@ -83,7 +91,7 @@ api.interceptors.response.use(
 
       try {
         // Direct call to avoid auth headers and interceptor loops
-        const response = await axios.post("https://url-shortener-backend-mztz.onrender.com/api/auth/refresh-token", {
+        const response = await axios.post(`${api.defaults.baseURL}api/auth/refresh-token`, {
           refreshToken,
         });
 
