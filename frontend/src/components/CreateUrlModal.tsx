@@ -219,10 +219,10 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.4 }}
-            className="bg-white rounded-2xl shadow-xl w-full max-w-lg border border-gray-100 overflow-hidden z-10 pointer-events-auto"
+            className="bg-white rounded-2xl shadow-xl w-full max-w-lg border border-gray-100 overflow-hidden z-10 pointer-events-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col"
           >
             {/* Header */}
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
               <h2 className="text-xl font-bold text-gray-900">
                 {isEditMode ? "Edit Shortened URL" : "Shorten New URL"}
               </h2>
@@ -235,7 +235,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1 scrollbar-thin">
               {/* Original URL Field */}
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-700">Original URL</label>
