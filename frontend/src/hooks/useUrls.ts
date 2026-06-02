@@ -42,6 +42,7 @@ export const useCreateUrl = () => {
       maxClicks?: number | null;
       selfDestruct?: boolean;
       password?: string | null;
+      customCode?: string;
     }
   >({
     mutationFn: async (data) => {
@@ -69,6 +70,7 @@ export const useUpdateUrl = () => {
       maxClicks?: number | null;
       selfDestruct?: boolean;
       password?: string | null;
+      shortCode?: string;
     }
   >({
     mutationFn: async ({ id, ...data }) => {

@@ -24,8 +24,9 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
   const [maxClicks, setMaxClicks] = useState("");
   const [selfDestruct, setSelfDestruct] = useState(false);
   const [password, setPassword] = useState("");
+  const [customCode, setCustomCode] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [errors, setErrors] = useState<{ originalUrl?: string; emails?: string }>({});
+  const [errors, setErrors] = useState<{ originalUrl?: string; emails?: string; customCode?: string }>({});
 
   const formatDateTimeLocal = (isoString?: string | null) => {
     if (!isoString) return "";
@@ -51,6 +52,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
         setMaxClicks(editData.maxClicks ? String(editData.maxClicks) : "");
         setSelfDestruct(editData.selfDestruct || false);
         setPassword(editData.password ? "••••••••" : "");
+        setCustomCode(editData.shortCode || "");
         setShowAdvanced(
           !!editData.expiresAt || 
           !!editData.maxClicks || 
@@ -65,6 +67,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
         setMaxClicks("");
         setSelfDestruct(false);
         setPassword("");
+        setCustomCode("");
         setShowAdvanced(false);
       }
       setEmailInput("");
@@ -123,6 +126,24 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
       passwordPayload = password || null; // Create mode
     }
 
+    // Local validations for custom code
+    if (isEditMode && !customCode.trim()) {
+      setErrors((prev) => ({ ...prev, customCode: "Short code alias cannot be empty." }));
+      return;
+    }
+
+    if (customCode.trim() !== "") {
+      const cleanCode = customCode.trim();
+      const codeRegex = /^[a-zA-Z0-9-_]+$/;
+      if (!codeRegex.test(cleanCode)) {
+        setErrors((prev) => ({
+          ...prev,
+          customCode: "Custom code can only contain letters, numbers, dashes, and underscores."
+        }));
+        return;
+      }
+    }
+
     const formData = {
       originalUrl,
       isProtected,
@@ -131,16 +152,21 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
       maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
       selfDestruct,
       password: passwordPayload,
+      customCode: !isEditMode && customCode.trim() ? customCode.trim() : undefined,
+      shortCode: isEditMode && customCode.trim() ? customCode.trim() : undefined,
     };
 
     // Run Zod validation
     const validation = createUrlSchema.safeParse(formData);
 
     if (!validation.success) {
-      const fieldErrors: { originalUrl?: string; emails?: string } = {};
+      const fieldErrors: { originalUrl?: string; emails?: string; customCode?: string } = {};
       validation.error.issues.forEach((err) => {
         if (err.path.includes("originalUrl")) {
           fieldErrors.originalUrl = err.message;
+        }
+        if (err.path.includes("customCode") || err.path.includes("shortCode")) {
+          fieldErrors.customCode = err.message;
         }
       });
       setErrors(fieldErrors);
@@ -158,6 +184,7 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
           maxClicks: maxClicks ? parseInt(maxClicks, 10) : null,
           selfDestruct,
           password: passwordPayload,
+          shortCode: customCode.trim(),
         });
         showToast("URL updated successfully", "success");
       } else {
@@ -228,6 +255,40 @@ export const CreateUrlModal: React.FC<CreateUrlModalProps> = ({ isOpen, onClose,
                   <p className="text-xs text-red-500 font-medium flex items-center gap-1">
                     <ShieldAlert className="w-3 h-3" />
                     {errors.originalUrl}
+                  </p>
+                )}
+              </div>
+
+              {/* Custom Alias Field */}
+              <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700 flex items-center justify-between">
+                  <span>Custom Alias {!isEditMode && <span className="text-gray-400 font-normal">(Optional)</span>}</span>
+                  <span className="text-xs text-gray-400 font-normal">Alphanumeric, dashes & underscores</span>
+                </label>
+                <div className="relative flex items-center">
+                  <div className="absolute left-4 text-gray-400 font-semibold text-sm pointer-events-none select-none">
+                    /
+                  </div>
+                  <input
+                    type="text"
+                    placeholder={isEditMode ? "alias" : "custom-alias (auto-generated if empty)"}
+                    value={customCode}
+                    onChange={(e) => {
+                      setCustomCode(e.target.value.replace(/\s+/g, ""));
+                      setErrors((prev) => ({ ...prev, customCode: undefined }));
+                    }}
+                    className={`w-full pl-7 pr-4 py-3 rounded-xl border outline-none text-gray-900 placeholder:text-gray-400 transition-all text-sm ${
+                      errors.customCode
+                        ? "border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500/20"
+                        : "border-gray-200 focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/20"
+                    }`}
+                    disabled={isSubmitting}
+                  />
+                </div>
+                {errors.customCode && (
+                  <p className="text-xs text-red-500 font-medium flex items-center gap-1">
+                    <ShieldAlert className="w-3 h-3" />
+                    {errors.customCode}
                   </p>
                 )}
               </div>

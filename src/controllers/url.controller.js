@@ -85,6 +85,29 @@ const updateUrlController = asyncHandler(async (req, res, next) => {
     throw new ApiError(400, "No valid fields were provided for update");
   }
 
+  if (data.shortCode && data.shortCode.trim() !== "") {
+    const cleanCode = data.shortCode.trim();
+
+    const codeRegex = /^[a-zA-Z0-9-_]+$/;
+    if (!codeRegex.test(cleanCode)) {
+      throw new ApiError(
+        400,
+        "Custom code can only contain letters, numbers, dashes, and underscores.",
+      );
+    }
+
+    const duplicate = await ShortUrl.findOne({
+      shortCode: cleanCode,
+      _id: { $ne: id },
+    });
+
+    if (duplicate) {
+      throw new ApiError(400, "This custom short code is already taken.");
+    }
+
+    data.shortCode = cleanCode;
+  }
+
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 10);
   }

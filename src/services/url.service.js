@@ -14,12 +14,36 @@ const createShortUrl = async ({
   maxClicks,
   selfDestruct,
   password,
+  customCode,
 }) => {
-  let shortCode = generateShortCode();
+  let shortCode;
 
-  let existingCode = await ShortUrl.findOne({ shortCode });
-  if (existingCode) {
-    throw new ApiError(400, "Short code already exists");
+  if (customCode && customCode.trim() !== "") {
+    const cleanCode = customCode.trim();
+
+    const codeRegex = /^[a-zA-Z0-9-_]+$/;
+    if (!codeRegex.test(cleanCode)) {
+      throw new ApiError(
+        400,
+        "Custom code can only contain letters, numbers, dashes, and underscores.",
+      );
+    }
+
+    let existingCode = await ShortUrl.findOne({ shortCode: cleanCode });
+    if (existingCode) {
+      throw new ApiError(400, "Short code already exists");
+    }
+
+    shortCode = cleanCode;
+  } else {
+    shortCode = generateShortCode();
+    let existingCode = await ShortUrl.findOne({ shortCode });
+    if (existingCode) {
+      throw new ApiError(
+        400,
+        "Generated short code already exists. Please try again.",
+      );
+    }
   }
 
   let hashedPassword = null;
