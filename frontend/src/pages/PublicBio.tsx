@@ -258,6 +258,32 @@ export const PublicBio: React.FC = () => {
   const { username } = useParams<{ username: string }>();
   const { data: profile, isLoading, isError } = usePublicBioProfile(username || "");
 
+  // Page-wide mouse position springs for reactive background blobs
+  const pageMouseX = useMotionValue(0);
+  const pageMouseY = useMotionValue(0);
+
+  const springPageX = useSpring(pageMouseX, { damping: 60, stiffness: 80 });
+  const springPageY = useSpring(pageMouseY, { damping: 60, stiffness: 80 });
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      // Displaces blobs from -50 to 50px depending on cursor coordinates
+      const xVal = ((e.clientX / window.innerWidth) - 0.5) * 100;
+      const yVal = ((e.clientY / window.innerHeight) - 0.5) * 100;
+      pageMouseX.set(xVal);
+      pageMouseY.set(yVal);
+    };
+
+    window.addEventListener("mousemove", handleGlobalMouseMove);
+    return () => window.removeEventListener("mousemove", handleGlobalMouseMove);
+  }, [pageMouseX, pageMouseY]);
+
+  const blob1X = useTransform(springPageX, (x) => x * 0.5);
+  const blob1Y = useTransform(springPageY, (y) => y * 0.5);
+
+  const blob2X = useTransform(springPageX, (x) => x * -0.7);
+  const blob2Y = useTransform(springPageY, (y) => y * -0.7);
+
   if (isLoading) {
     return (
       <div className="bg-[#030712] min-h-screen text-white flex flex-col items-center justify-center gap-3">
@@ -290,32 +316,6 @@ export const PublicBio: React.FC = () => {
       </div>
     );
   }
-
-  // Page-wide mouse position springs for reactive background blobs
-  const pageMouseX = useMotionValue(0);
-  const pageMouseY = useMotionValue(0);
-
-  const springPageX = useSpring(pageMouseX, { damping: 60, stiffness: 80 });
-  const springPageY = useSpring(pageMouseY, { damping: 60, stiffness: 80 });
-
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      // Displaces blobs from -50 to 50px depending on cursor coordinates
-      const xVal = ((e.clientX / window.innerWidth) - 0.5) * 100;
-      const yVal = ((e.clientY / window.innerHeight) - 0.5) * 100;
-      pageMouseX.set(xVal);
-      pageMouseY.set(yVal);
-    };
-
-    window.addEventListener("mousemove", handleGlobalMouseMove);
-    return () => window.removeEventListener("mousemove", handleGlobalMouseMove);
-  }, [pageMouseX, pageMouseY]);
-
-  const blob1X = useTransform(springPageX, (x) => x * 0.5);
-  const blob1Y = useTransform(springPageY, (y) => y * 0.5);
-
-  const blob2X = useTransform(springPageX, (x) => x * -0.7);
-  const blob2Y = useTransform(springPageY, (y) => y * -0.7);
 
   // Theme definition mapping
   const themes = {
