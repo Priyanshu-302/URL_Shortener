@@ -7,7 +7,28 @@
   scrollbar-width: none;
 }
 
-/* Floating Animations for Midnight Blobs */
+/* Morphing Liquid Blobs (Organic Morphing) */
+@keyframes morph-liquid {
+  0%, 100% {
+    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
+  }
+  33% {
+    border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%;
+  }
+  66% {
+    border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%;
+  }
+}
+
+.animate-liquid-blob-1 {
+  animation: morph-liquid 16s infinite ease-in-out alternate;
+}
+
+.animate-liquid-blob-2 {
+  animation: morph-liquid 20s infinite ease-in-out alternate-reverse;
+}
+
+/* Floating Animations for Blobs */
 @keyframes float-slow {
   0% {
     transform: translate(0px, 0px) scale(1);

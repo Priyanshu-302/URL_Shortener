@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Navbar } from "../components/Navbar";
 import { useUrls } from "../hooks/useUrls";
 import { useBioProfile, useUpdateBioProfile } from "../hooks/useBio";
@@ -13,6 +13,7 @@ import {
   Loader2,
   Lock
 } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 // Inline brand SVGs for social media icons (lucide-react v1.17 does not export brand icons)
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -50,11 +51,226 @@ const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+// High-fidelity interactive card for the mobile preview (scaled down for phone screen container)
+interface MockupInteractiveCardProps {
+  children: React.ReactNode;
+  theme: "minimal" | "midnight" | "sunset" | "neon";
+  className: string;
+}
+
+const MockupInteractiveCard: React.FC<MockupInteractiveCardProps> = ({ children, theme, className }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  // Motion values for magnetic pull (max 5px displacement)
+  const cardX = useMotionValue(0);
+  const cardY = useMotionValue(0);
+  
+  // Motion values for 3D tilt (max 6 degrees)
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  
+  // Motion values for internal text/elements parallax depth
+  const contentX = useMotionValue(0);
+  const contentY = useMotionValue(0);
+  
+  // Motion values for spotlight tracking relative to card bounding box
+  const spotlightX = useMotionValue(0);
+  const spotlightY = useMotionValue(0);
+  const spotlightOpacity = useMotionValue(0);
+  
+  // Spring configurations
+  const springConfig = { damping: 25, stiffness: 150, mass: 0.6 };
+  
+  const springCardX = useSpring(cardX, springConfig);
+  const springCardY = useSpring(cardY, springConfig);
+  const springRotateX = useSpring(rotateX, springConfig);
+  const springRotateY = useSpring(rotateY, springConfig);
+  const springContentX = useSpring(contentX, springConfig);
+  const springContentY = useSpring(contentY, springConfig);
+  const springSpotlightX = useSpring(spotlightX, { damping: 30, stiffness: 120 });
+  const springSpotlightY = useSpring(spotlightY, { damping: 30, stiffness: 120 });
+  const springSpotlightOpacity = useSpring(spotlightOpacity, { damping: 20, stiffness: 150 });
+
+  const getSpotlightColor = () => {
+    switch (theme) {
+      case "midnight": return "rgba(139, 92, 246, 0.35)"; // Purple
+      case "sunset": return "rgba(255, 255, 255, 0.4)"; // White
+      case "neon": return "rgba(0, 255, 204, 0.35)"; // Cyan
+      case "minimal":
+      default:
+        return "rgba(14, 165, 233, 0.3)"; // Sky Blue
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const pullX = (x - centerX) * 0.08;
+    const pullY = (y - centerY) * 0.08;
+    
+    const tiltX = -(y - centerY) / (rect.height / 12);
+    const tiltY = (x - centerX) / (rect.width / 12);
+    
+    const paraX = -(x - centerX) * 0.03;
+    const paraY = -(y - centerY) * 0.03;
+
+    cardX.set(pullX);
+    cardY.set(pullY);
+    rotateX.set(tiltX);
+    rotateY.set(tiltY);
+    contentX.set(paraX);
+    contentY.set(paraY);
+    
+    spotlightX.set(x);
+    spotlightY.set(y);
+    spotlightOpacity.set(1);
+  };
+
+  const handleMouseLeave = () => {
+    cardX.set(0);
+    cardY.set(0);
+    rotateX.set(0);
+    rotateY.set(0);
+    contentX.set(0);
+    contentY.set(0);
+    spotlightOpacity.set(0);
+  };
+
+  const scale = useTransform(springSpotlightOpacity, [0, 1], [1, 1.025]);
+  const cleanedClassName = className.replace(/transition-all|duration-\d+/g, "");
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        x: springCardX,
+        y: springCardY,
+        rotateX: springRotateX,
+        rotateY: springRotateY,
+        scale,
+        transformStyle: "preserve-3d" as const,
+      }}
+      className={`${cleanedClassName} overflow-hidden relative cursor-default block`}
+    >
+      <motion.div
+        style={{
+          x: springSpotlightX,
+          y: springSpotlightY,
+          opacity: springSpotlightOpacity,
+          translateX: "-50%",
+          translateY: "-50%",
+          background: `radial-gradient(circle 80px, ${getSpotlightColor()}, transparent 100%)`
+        }}
+        className="absolute pointer-events-none w-[160px] h-[160px] z-0 top-0 left-0"
+      />
+      
+      <motion.div
+        style={{
+          x: springContentX,
+          y: springContentY,
+          transformStyle: "preserve-3d" as const,
+        }}
+        className="w-full flex items-center justify-between relative z-10 pointer-events-none"
+      >
+        {children}
+      </motion.div>
+    </motion.div>
+  );
+};
+
+// Scaled magnetic social badges for phone preview frame
+interface MockupMagneticSocialProps {
+  children: React.ReactNode;
+  className: string;
+}
+
+const MockupMagneticSocial: React.FC<MockupMagneticSocialProps> = ({ children, className }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  const springX = useSpring(x, { stiffness: 220, damping: 20 });
+  const springY = useSpring(y, { stiffness: 220, damping: 20 });
+  
+  const handleMouseMove = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const span = ref.current;
+    if (!span) return;
+    
+    const rect = span.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const pullX = (e.clientX - centerX) * 0.3;
+    const pullY = (e.clientY - centerY) * 0.3;
+    
+    x.set(pullX);
+    y.set(pullY);
+  };
+  
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  const cleanedClassName = className.replace(/transition-all|duration-\d+/g, "");
+  
+  return (
+    <motion.span
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x: springX, y: springY }}
+      whileHover={{ scale: 1.15 }}
+      whileTap={{ scale: 0.92 }}
+      className={`${cleanedClassName} inline-block`}
+    >
+      {children}
+    </motion.span>
+  );
+};
+
 export const BioBuilder: React.FC = () => {
   const { showToast } = useToast();
   const { data: userUrls = [], isLoading: urlsLoading } = useUrls();
   const { data: profile, isLoading: profileLoading } = useBioProfile();
   const updateMutation = useUpdateBioProfile();
+
+  // Mouse position springs for mockup background blobs
+  const pageMouseX = useMotionValue(0);
+  const pageMouseY = useMotionValue(0);
+
+  const springPageX = useSpring(pageMouseX, { damping: 60, stiffness: 80 });
+  const springPageY = useSpring(pageMouseY, { damping: 60, stiffness: 80 });
+
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      // Displaces blobs from -30 to 30px depending on cursor coordinates
+      const xVal = ((e.clientX / window.innerWidth) - 0.5) * 60;
+      const yVal = ((e.clientY / window.innerHeight) - 0.5) * 60;
+      pageMouseX.set(xVal);
+      pageMouseY.set(yVal);
+    };
+
+    window.addEventListener("mousemove", handleGlobalMouseMove);
+    return () => window.removeEventListener("mousemove", handleGlobalMouseMove);
+  }, [pageMouseX, pageMouseY]);
+
+  const blob1X = useTransform(springPageX, (x) => x * 0.5);
+  const blob1Y = useTransform(springPageY, (y) => y * 0.5);
+
+  const blob2X = useTransform(springPageX, (x) => x * -0.7);
+  const blob2Y = useTransform(springPageY, (y) => y * -0.7);
 
   // Settings State
   const [username, setUsername] = useState("");
@@ -531,14 +747,26 @@ export const BioBuilder: React.FC = () => {
               {/* Decorative Backgrounds for Mockup Preview */}
               {theme === "midnight" && (
                 <>
-                  <div className="w-40 h-40 rounded-full bg-purple-600/30 filter blur-2xl absolute top-10 left-5 animate-blob-1 pointer-events-none"></div>
-                  <div className="w-40 h-40 rounded-full bg-blue-600/20 filter blur-2xl absolute bottom-20 right-5 animate-blob-2 pointer-events-none"></div>
+                  <motion.div style={{ x: blob1X, y: blob1Y }} className="w-40 h-40 rounded-full bg-purple-600/30 filter blur-2xl absolute top-10 left-5 animate-blob-1 pointer-events-none"></motion.div>
+                  <motion.div style={{ x: blob2X, y: blob2Y }} className="w-40 h-40 rounded-full bg-blue-600/20 filter blur-2xl absolute bottom-20 right-5 animate-blob-2 pointer-events-none"></motion.div>
                 </>
               )}
               {theme === "minimal" && (
                 <>
-                  <div className="w-48 h-48 rounded-full bg-sky-200/30 filter blur-2xl absolute top-[-5%] left-[-10%] pointer-events-none"></div>
-                  <div className="w-48 h-48 rounded-full bg-emerald-200/20 filter blur-2xl absolute bottom-[5%] right-[-10%] pointer-events-none"></div>
+                  <motion.div style={{ x: blob1X, y: blob1Y }} className="w-48 h-48 rounded-full bg-sky-200/30 filter blur-2xl absolute top-[-5%] left-[-10%] pointer-events-none"></motion.div>
+                  <motion.div style={{ x: blob2X, y: blob2Y }} className="w-48 h-48 rounded-full bg-emerald-200/20 filter blur-2xl absolute bottom-[5%] right-[-10%] pointer-events-none"></motion.div>
+                </>
+              )}
+              {theme === "sunset" && (
+                <>
+                  <motion.div style={{ x: blob1X, y: blob1Y }} className="w-48 h-48 rounded-full bg-yellow-400/25 filter blur-2xl absolute top-[-5%] left-[-10%] pointer-events-none"></motion.div>
+                  <motion.div style={{ x: blob2X, y: blob2Y }} className="w-48 h-48 rounded-full bg-rose-500/20 filter blur-2xl absolute bottom-[5%] right-[-10%] pointer-events-none"></motion.div>
+                </>
+              )}
+              {theme === "neon" && (
+                <>
+                  <motion.div style={{ x: blob1X, y: blob1Y }} className="w-40 h-40 rounded-full bg-pink-600/15 filter blur-2xl absolute top-10 left-5 pointer-events-none"></motion.div>
+                  <motion.div style={{ x: blob2X, y: blob2Y }} className="w-40 h-40 rounded-full bg-cyan-500/15 filter blur-2xl absolute bottom-20 right-5 pointer-events-none"></motion.div>
                 </>
               )}
 
@@ -586,29 +814,29 @@ export const BioBuilder: React.FC = () => {
               {(instagram || twitter || github || linkedin || youtube) && (
                 <div className="flex flex-wrap justify-center gap-3 relative z-10">
                   {instagram && (
-                    <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
+                    <MockupMagneticSocial className={mockupThemeStyles.social}>
                       <InstagramIcon />
-                    </span>
+                    </MockupMagneticSocial>
                   )}
                   {twitter && (
-                    <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
+                    <MockupMagneticSocial className={mockupThemeStyles.social}>
                       <TwitterIcon />
-                    </span>
+                    </MockupMagneticSocial>
                   )}
                   {github && (
-                    <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
+                    <MockupMagneticSocial className={mockupThemeStyles.social}>
                       <GithubIcon />
-                    </span>
+                    </MockupMagneticSocial>
                   )}
                   {linkedin && (
-                    <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
+                    <MockupMagneticSocial className={mockupThemeStyles.social}>
                       <LinkedinIcon />
-                    </span>
+                    </MockupMagneticSocial>
                   )}
                   {youtube && (
-                    <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
+                    <MockupMagneticSocial className={mockupThemeStyles.social}>
                       <YoutubeIcon />
-                    </span>
+                    </MockupMagneticSocial>
                   )}
                 </div>
               )}
@@ -623,18 +851,19 @@ export const BioBuilder: React.FC = () => {
                   </div>
                 ) : (
                   activeUrlItems.map((url) => (
-                    <div
+                    <MockupInteractiveCard
                       key={url._id}
-                      className={`w-full py-2.5 px-4 rounded-2xl flex items-center justify-between text-xs transition-all duration-300 truncate ${mockupThemeStyles.cardBg}`}
+                      theme={theme}
+                      className={`w-full py-2.5 px-4 rounded-2xl flex items-center justify-between text-xs truncate ${mockupThemeStyles.cardBg}`}
                     >
-                      <div className="flex items-center gap-1.5 truncate">
-                        {url.isProtected && <Lock className="w-3.5 h-3.5 opacity-70" />}
+                      <div className="flex items-center gap-1.5 truncate relative z-10 pointer-events-none">
+                        {url.isProtected && <Lock className="w-3.5 h-3.5 opacity-70 flex-shrink-0" />}
                         <span className="font-bold truncate pr-2">
                           {url.originalUrl.replace(/https?:\/\/(www\.)?/, "").split("/")[0]}
                         </span>
                       </div>
-                      <span className="opacity-80 text-[9px] font-bold">/{url.shortCode}</span>
-                    </div>
+                      <span className="opacity-80 text-[9px] font-bold relative z-10 pointer-events-none">/{url.shortCode}</span>
+                    </MockupInteractiveCard>
                   ))
                 )}
               </div>
