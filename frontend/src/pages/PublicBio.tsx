@@ -87,36 +87,36 @@ export const PublicBio: React.FC = () => {
   // Theme definition mapping
   const themes = {
     minimal: {
-      outerBg: "bg-[#F8FAFC]",
-      cardWrap: "max-w-md mx-auto bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-sm my-10 sm:my-20",
-      text: "text-gray-900",
-      bio: "text-gray-500",
-      buttonBg: "bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-800",
-      social: "text-gray-400 hover:text-gray-700 bg-gray-100/50 hover:bg-gray-100 p-2.5 rounded-full"
+      outerBg: "bg-gradient-to-br from-teal-50 via-sky-50 to-emerald-100 relative overflow-hidden",
+      cardWrap: "max-w-md mx-auto bg-white/85 backdrop-blur-md border border-sky-100 rounded-[32px] p-6 sm:p-8 shadow-[0_20px_50px_rgba(8,112,184,0.06)] my-10 sm:my-20 relative z-10",
+      text: "text-slate-800",
+      bio: "text-slate-500",
+      buttonBg: "bg-gradient-to-r from-sky-400 to-emerald-400 hover:from-sky-500 hover:to-emerald-500 text-white font-bold shadow-md shadow-sky-400/20",
+      social: "text-sky-500 hover:text-emerald-500 bg-sky-50 hover:bg-sky-100 p-2.5 rounded-full border border-sky-100 transition-colors"
     },
     midnight: {
-      outerBg: "bg-[#020617] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#0B1528] via-[#020617] to-[#020617]",
-      cardWrap: "max-w-md mx-auto bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-3xl p-6 sm:p-8 shadow-2xl my-10 sm:my-20",
+      outerBg: "bg-[#030712] relative overflow-hidden",
+      cardWrap: "max-w-md mx-auto bg-slate-950/45 backdrop-blur-2xl border border-white/10 rounded-[32px] p-6 sm:p-8 shadow-[0_24px_64px_rgba(0,0,0,0.6)] my-10 sm:my-20 relative z-10",
       text: "text-white",
       bio: "text-slate-400",
-      buttonBg: "bg-white/5 hover:bg-white/10 border border-white/10 text-white shadow-lg",
-      social: "text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 p-2.5 rounded-full"
+      buttonBg: "bg-white/10 hover:bg-[#7C3AED]/20 border border-white/10 hover:border-[#7C3AED]/50 text-white shadow-lg shadow-black/20 hover:shadow-[#7C3AED]/20",
+      social: "text-slate-300 hover:text-white bg-white/5 hover:bg-[#7C3AED]/20 p-2.5 rounded-full border border-white/10 transition-colors"
     },
     sunset: {
-      outerBg: "bg-gradient-to-tr from-[#FDA4AF] via-[#F472B6] to-[#BE185D]",
-      cardWrap: "max-w-md mx-auto bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl my-10 sm:my-20",
+      outerBg: "bg-gradient-to-tr from-[#FF512F] via-[#F09819] to-[#DD2476] animate-gradient-shift relative overflow-hidden",
+      cardWrap: "max-w-md mx-auto bg-white/15 backdrop-blur-lg border border-white/20 rounded-[32px] p-6 sm:p-8 shadow-[0_24px_50px_rgba(0,0,0,0.25)] my-10 sm:my-20 relative z-10",
       text: "text-white",
       bio: "text-pink-100",
-      buttonBg: "bg-white hover:bg-pink-50 text-[#BE185D] font-bold shadow-md shadow-pink-900/10",
-      social: "text-white hover:text-pink-100 bg-white/10 hover:bg-white/20 p-2.5 rounded-full"
+      buttonBg: "bg-white hover:bg-pink-50 text-[#DD2476] font-extrabold shadow-xl shadow-pink-900/10",
+      social: "text-white hover:text-pink-100 bg-white/10 hover:bg-white/25 p-2.5 rounded-full border border-white/20 transition-colors"
     },
     neon: {
-      outerBg: "bg-black",
-      cardWrap: "max-w-md mx-auto bg-black border border-pink-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_0_20px_rgba(236,72,153,0.15)] my-10 sm:my-20",
-      text: "text-[#00FFCC] font-mono",
-      bio: "text-[#FF007F] font-mono text-sm",
-      buttonBg: "bg-transparent border border-pink-500 text-pink-500 hover:bg-pink-500/10 shadow-[0_0_10px_rgba(236,72,153,0.2)] font-mono",
-      social: "text-[#00FFCC] hover:text-white bg-transparent border border-[#00FFCC]/20 hover:border-[#00FFCC] p-2.5 rounded-full"
+      outerBg: "bg-black cyber-grid relative overflow-hidden",
+      cardWrap: "max-w-md mx-auto bg-black/80 border-2 border-pink-500/80 rounded-[32px] p-6 sm:p-8 shadow-[0_0_35px_rgba(236,72,153,0.35),inset_0_0_15px_rgba(236,72,153,0.15)] my-10 sm:my-20 relative z-10",
+      text: "text-[#00FFCC] font-mono neon-text-glow",
+      bio: "text-[#FF007F] font-mono text-sm tracking-wide",
+      buttonBg: "bg-transparent border border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black shadow-[0_0_12px_rgba(0,255,204,0.3)] hover:shadow-[0_0_22px_rgba(0,255,204,0.6)] font-mono font-bold",
+      social: "text-[#00FFCC] hover:text-[#FF007F] bg-transparent border border-[#00FFCC]/40 hover:border-[#FF007F] p-2.5 rounded-full transition-colors"
     }
   }[profile.theme];
 
@@ -132,7 +132,7 @@ export const PublicBio: React.FC = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
+    hidden: { opacity: 0, y: 15 },
     show: {
       opacity: 1,
       y: 0,
@@ -143,36 +143,65 @@ export const PublicBio: React.FC = () => {
   return (
     <div className={`min-h-screen w-full flex flex-col justify-between px-4 transition-all duration-300 ${themes.outerBg}`}>
       
+      {/* Decorative Floating Circles for themes */}
+      {profile.theme === "midnight" && (
+        <>
+          <div className="w-72 h-72 rounded-full bg-purple-600/35 filter blur-3xl absolute top-10 left-10 animate-blob-1 pointer-events-none"></div>
+          <div className="w-80 h-80 rounded-full bg-blue-600/25 filter blur-3xl absolute bottom-20 right-10 animate-blob-2 pointer-events-none"></div>
+        </>
+      )}
+
+      {profile.theme === "minimal" && (
+        <>
+          <div className="w-96 h-96 rounded-full bg-sky-200/40 filter blur-3xl absolute top-[-5%] left-[-10%] pointer-events-none"></div>
+          <div className="w-96 h-96 rounded-full bg-emerald-200/30 filter blur-3xl absolute bottom-[5%] right-[-10%] pointer-events-none"></div>
+        </>
+      )}
+
       {/* Bio Body Container */}
-      <div className={`w-full ${themes.cardWrap}`}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`w-full ${themes.cardWrap}`}
+      >
         {/* Profile Card Header */}
-        <div className="flex flex-col items-center text-center space-y-3">
-          {profile.avatarUrl ? (
-            <img
-              src={profile.avatarUrl}
-              alt={profile.displayName}
-              className="w-20 h-20 rounded-full object-cover border border-white/20 shadow-md"
-              onError={(e) => {
-                (e.target as HTMLElement).style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-[#7C3AED] text-white flex items-center justify-center font-bold text-2xl border border-white/20 shadow-md">
-              {(profile.displayName || "U")[0].toUpperCase()}
-            </div>
-          )}
+        <div className="flex flex-col items-center text-center space-y-4">
+          <div className="relative">
+            {/* Pulsing Avatar Ring */}
+            {profile.theme === "midnight" && (
+              <div className="absolute inset-0 rounded-full bg-purple-600/50 filter blur-sm scale-110 animate-ring-pulse pointer-events-none"></div>
+            )}
+            {profile.theme === "neon" && (
+              <div className="absolute inset-0 rounded-full border-2 border-pink-500 scale-105 animate-pulse pointer-events-none"></div>
+            )}
+            {profile.avatarUrl ? (
+              <img
+                src={profile.avatarUrl}
+                alt={profile.displayName}
+                className="w-24 h-24 rounded-full object-cover border-2 border-white/20 shadow-lg relative z-10"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#A78BFA] text-white flex items-center justify-center font-bold text-3xl border-2 border-white/20 shadow-lg relative z-10">
+                {(profile.displayName || "U")[0].toUpperCase()}
+              </div>
+            )}
+          </div>
           
-          <div className="space-y-0.5">
-            <h1 className={`text-xl sm:text-2xl font-black tracking-tight ${themes.text}`}>
+          <div className="space-y-1">
+            <h1 className={`text-2xl sm:text-3xl font-black tracking-tight ${themes.text}`}>
               {profile.displayName}
             </h1>
-            <p className={`text-xs sm:text-sm font-semibold opacity-70 ${themes.bio}`}>
+            <p className={`text-xs sm:text-sm font-bold opacity-75 ${themes.bio}`}>
               @{profile.username}
             </p>
           </div>
 
           {profile.bio && (
-            <p className={`text-sm leading-relaxed max-w-xs mt-1 ${themes.bio}`}>
+            <p className={`text-sm sm:text-base leading-relaxed max-w-sm font-medium ${themes.bio}`}>
               {profile.bio}
             </p>
           )}
@@ -182,54 +211,64 @@ export const PublicBio: React.FC = () => {
         {(profile.socials.instagram || profile.socials.twitter || profile.socials.github || profile.socials.linkedin || profile.socials.youtube) && (
           <div className="flex flex-wrap justify-center gap-4 mt-6">
             {profile.socials.instagram && (
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 href={`https://instagram.com/${profile.socials.instagram}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`transition-all duration-200 ${themes.social}`}
               >
                 <InstagramIcon />
-              </a>
+              </motion.a>
             )}
             {profile.socials.twitter && (
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 href={`https://twitter.com/${profile.socials.twitter}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`transition-all duration-200 ${themes.social}`}
               >
                 <TwitterIcon />
-              </a>
+              </motion.a>
             )}
             {profile.socials.github && (
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 href={`https://github.com/${profile.socials.github}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`transition-all duration-200 ${themes.social}`}
               >
                 <GithubIcon />
-              </a>
+              </motion.a>
             )}
             {profile.socials.linkedin && (
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 href={`https://linkedin.com/in/${profile.socials.linkedin}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`transition-all duration-200 ${themes.social}`}
               >
                 <LinkedinIcon />
-              </a>
+              </motion.a>
             )}
             {profile.socials.youtube && (
-              <a 
+              <motion.a 
+                whileHover={{ scale: 1.15, y: -2 }}
+                whileTap={{ scale: 0.95 }}
                 href={`https://youtube.com/@${profile.socials.youtube}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`transition-all duration-200 ${themes.social}`}
               >
                 <YoutubeIcon />
-              </a>
+              </motion.a>
             )}
           </div>
         )}
@@ -250,42 +289,44 @@ export const PublicBio: React.FC = () => {
               const fullShortUrl = `/${link.shortCode}`;
               return (
                 <motion.div key={link._id} variants={itemVariants}>
-                  <a
+                  <motion.a
+                    whileHover={{ scale: 1.025, y: -2 }}
+                    whileTap={{ scale: 0.985 }}
                     href={fullShortUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full py-3.5 px-5 rounded-2xl flex items-center justify-between text-sm transition-all duration-300 group hover:scale-[1.02] ${themes.buttonBg}`}
+                    className={`w-full py-4 px-6 rounded-2xl flex items-center justify-between text-sm sm:text-base transition-all duration-300 group ${themes.buttonBg}`}
                   >
                     <div className="flex items-center gap-2 truncate pr-4">
                       {link.isPasswordProtected && (
-                        <Lock className="w-4 h-4 opacity-70 flex-shrink-0" />
+                        <Lock className="w-4 h-4 opacity-75 flex-shrink-0" />
                       )}
-                      <span className="font-semibold truncate">
+                      <span className="font-bold truncate">
                         {link.title}
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-1 opacity-60 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                      <span className="text-xs">/{link.shortCode}</span>
-                      <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+                    <div className="flex items-center gap-1 opacity-75 group-hover:opacity-100 transition-all flex-shrink-0">
+                      <span className="text-xs font-semibold">/{link.shortCode}</span>
+                      <ExternalLink className="w-3.5 h-3.5 ml-0.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </div>
-                  </a>
+                  </motion.a>
                 </motion.div>
               );
             })
           )}
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Brand Footer */}
-      <footer className="text-center py-6 mt-auto">
+      <footer className="text-center py-8 mt-auto relative z-10">
         <Link 
           to="/"
-          className={`inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider opacity-45 hover:opacity-75 transition-opacity ${themes.text}`}
+          className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider opacity-50 hover:opacity-85 transition-opacity ${themes.text}`}
         >
-          <Shield className="w-3.5 h-3.5 text-[#7C3AED]" />
+          <Shield className="w-4 h-4 text-[#7C3AED]" />
           <span>SecureLink Portal</span>
-          <ArrowRight className="w-3 h-3 text-[#7C3AED]" />
+          <ArrowRight className="w-3.5 h-3.5 text-[#7C3AED]" />
         </Link>
       </footer>
       

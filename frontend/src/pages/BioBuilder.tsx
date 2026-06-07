@@ -10,7 +10,8 @@ import {
   Link as LinkIcon, 
   Palette, 
   Sparkles,
-  Loader2
+  Loader2,
+  Lock
 } from "lucide-react";
 
 // Inline brand SVGs for social media icons (lucide-react v1.17 does not export brand icons)
@@ -146,35 +147,35 @@ export const BioBuilder: React.FC = () => {
     .map((id) => userUrls.find((u) => u._id === id))
     .filter((u): u is typeof userUrls[0] => !!u);
 
-  // Mock theme definitions
+  // Mock theme definitions matching PublicBio.tsx exactly
   const mockupThemeStyles = {
     minimal: {
-      bg: "bg-white",
-      text: "text-gray-900",
-      bio: "text-gray-500",
-      cardBg: "bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-800",
-      social: "text-gray-600 hover:text-gray-900"
+      bg: "bg-gradient-to-br from-teal-50 via-sky-50 to-emerald-100 relative overflow-hidden",
+      text: "text-slate-800 font-black",
+      bio: "text-slate-500 font-medium",
+      cardBg: "bg-gradient-to-r from-sky-400 to-emerald-400 text-white font-bold border-none shadow-md shadow-sky-400/20",
+      social: "text-sky-500 hover:text-emerald-500 bg-sky-50 border border-sky-100 p-1.5 rounded-full"
     },
     midnight: {
-      bg: "bg-gradient-to-b from-[#0F172A] to-[#020617]",
-      text: "text-white",
-      bio: "text-gray-400",
-      cardBg: "bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/10 text-white shadow-xl shadow-black/20",
-      social: "text-gray-400 hover:text-white"
+      bg: "bg-[#030712] relative overflow-hidden",
+      text: "text-white font-black",
+      bio: "text-slate-400 font-medium",
+      cardBg: "bg-white/10 hover:bg-[#7C3AED]/20 border border-white/10 text-white shadow-lg shadow-black/20",
+      social: "text-slate-300 hover:text-white bg-white/5 border border-white/10 p-1.5 rounded-full"
     },
     sunset: {
-      bg: "bg-gradient-to-tr from-[#FDA4AF] via-[#F472B6] to-[#BE185D]",
-      text: "text-white",
-      bio: "text-pink-100",
-      cardBg: "bg-white/80 hover:bg-white/90 text-[#BE185D] border border-white/20 shadow-md font-semibold",
-      social: "text-white hover:text-pink-100"
+      bg: "bg-gradient-to-tr from-[#FF512F] via-[#F09819] to-[#DD2476] animate-gradient-shift relative overflow-hidden",
+      text: "text-white font-black",
+      bio: "text-pink-100 font-medium",
+      cardBg: "bg-white text-[#DD2476] font-extrabold shadow-xl shadow-pink-900/10 border-none",
+      social: "text-white hover:text-pink-100 bg-white/10 border border-white/20 p-1.5 rounded-full"
     },
     neon: {
-      bg: "bg-black border border-pink-500/20",
-      text: "text-[#00FFCC] font-mono",
-      bio: "text-[#FF007F] font-mono text-xs",
-      cardBg: "bg-transparent border border-pink-500 text-pink-500 hover:bg-pink-500/10 shadow-[0_0_8px_rgba(236,72,153,0.3)] font-mono",
-      social: "text-[#00FFCC] hover:text-white"
+      bg: "bg-black cyber-grid relative overflow-hidden border border-pink-500/20",
+      text: "text-[#00FFCC] font-mono neon-text-glow font-bold",
+      bio: "text-[#FF007F] font-mono text-[10px] font-medium tracking-wide",
+      cardBg: "bg-transparent border border-cyan-400 text-cyan-400 font-mono shadow-[0_0_8px_rgba(0,255,204,0.3)]",
+      social: "text-[#00FFCC] hover:text-[#FF007F] bg-transparent border border-[#00FFCC]/40 p-1.5 rounded-full"
     }
   }[theme];
 
@@ -451,10 +452,10 @@ export const BioBuilder: React.FC = () => {
                         theme === "minimal" ? "border-[#7C3AED] bg-[#7C3AED]/5 ring-1 ring-[#7C3AED]" : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className="h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-xs font-bold text-gray-800">
-                        Minimal Light
+                      <div className="h-10 bg-gradient-to-br from-teal-50 via-sky-50 to-emerald-100 rounded-lg flex items-center justify-center text-xs font-bold text-slate-800 border border-sky-100 shadow-[0_4px_12px_rgba(8,112,184,0.05)]">
+                        Ocean Breeze
                       </div>
-                      <span className="text-xs font-bold text-center text-gray-700">Minimal</span>
+                      <span className="text-xs font-bold text-center text-gray-700">Ocean (Light)</span>
                     </div>
 
                     {/* Theme midnight */}
@@ -464,10 +465,10 @@ export const BioBuilder: React.FC = () => {
                         theme === "midnight" ? "border-[#7C3AED] bg-[#7C3AED]/5 ring-1 ring-[#7C3AED]" : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className="h-10 bg-gradient-to-b from-[#0F172A] to-[#020617] rounded-lg flex items-center justify-center text-xs font-bold text-white">
+                      <div className="h-10 bg-[#030712] border border-white/10 rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-black/40">
                         Midnight Navy
                       </div>
-                      <span className="text-xs font-bold text-center text-gray-700">Midnight</span>
+                      <span className="text-xs font-bold text-center text-gray-700">Midnight (Dark)</span>
                     </div>
 
                     {/* Theme sunset */}
@@ -477,10 +478,10 @@ export const BioBuilder: React.FC = () => {
                         theme === "sunset" ? "border-[#7C3AED] bg-[#7C3AED]/5 ring-1 ring-[#7C3AED]" : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className="h-10 bg-gradient-to-tr from-[#FDA4AF] via-[#F472B6] to-[#BE185D] rounded-lg flex items-center justify-center text-xs font-bold text-white">
+                      <div className="h-10 bg-gradient-to-tr from-[#FF512F] via-[#F09819] to-[#DD2476] rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-lg">
                         Sunset Pink
                       </div>
-                      <span className="text-xs font-bold text-center text-gray-700">Sunset</span>
+                      <span className="text-xs font-bold text-center text-gray-700">Sunset (Vibrant)</span>
                     </div>
 
                     {/* Theme neon */}
@@ -490,10 +491,10 @@ export const BioBuilder: React.FC = () => {
                         theme === "neon" ? "border-[#7C3AED] bg-[#7C3AED]/5 ring-1 ring-[#7C3AED]" : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <div className="h-10 bg-black rounded-lg flex items-center justify-center text-xs font-bold text-[#00FFCC] border border-pink-500/30">
+                      <div className="h-10 bg-black rounded-lg flex items-center justify-center text-xs font-bold text-[#00FFCC] border-2 border-pink-500/50 shadow-[0_0_10px_rgba(236,72,153,0.2)] font-mono">
                         Cyber Neon
                       </div>
-                      <span className="text-xs font-bold text-center text-gray-700">Neon</span>
+                      <span className="text-xs font-bold text-center text-gray-700">Neon (Cyber)</span>
                     </div>
                   </div>
                 </div>
@@ -525,24 +526,47 @@ export const BioBuilder: React.FC = () => {
             <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-4 bg-gray-900 rounded-b-xl z-20"></div>
 
             {/* Inner Phone Screen */}
-            <div className={`flex-1 rounded-[32px] overflow-y-auto px-4 pt-8 pb-4 relative space-y-5 flex flex-col select-none scrollbar-none ${mockupThemeStyles.bg}`}>
+            <div className={`flex-1 rounded-[32px] overflow-y-auto px-4 pt-8 pb-4 relative space-y-5 flex flex-col select-none scrollbar-none transition-all duration-300 ${mockupThemeStyles.bg}`}>
               
+              {/* Decorative Backgrounds for Mockup Preview */}
+              {theme === "midnight" && (
+                <>
+                  <div className="w-40 h-40 rounded-full bg-purple-600/30 filter blur-2xl absolute top-10 left-5 animate-blob-1 pointer-events-none"></div>
+                  <div className="w-40 h-40 rounded-full bg-blue-600/20 filter blur-2xl absolute bottom-20 right-5 animate-blob-2 pointer-events-none"></div>
+                </>
+              )}
+              {theme === "minimal" && (
+                <>
+                  <div className="w-48 h-48 rounded-full bg-sky-200/30 filter blur-2xl absolute top-[-5%] left-[-10%] pointer-events-none"></div>
+                  <div className="w-48 h-48 rounded-full bg-emerald-200/20 filter blur-2xl absolute bottom-[5%] right-[-10%] pointer-events-none"></div>
+                </>
+              )}
+
               {/* Profile Header */}
-              <div className="flex flex-col items-center text-center space-y-2 mt-4">
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt="Preview avatar"
-                    className="w-16 h-16 rounded-full object-cover border border-white/20 shadow-sm"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-[#7C3AED] text-white flex items-center justify-center font-bold text-xl border border-white/20 shadow-sm">
-                    {(displayName || "U")[0].toUpperCase()}
-                  </div>
-                )}
+              <div className="flex flex-col items-center text-center space-y-2 mt-4 relative z-10">
+                <div className="relative">
+                  {theme === "midnight" && (
+                    <div className="absolute inset-0 rounded-full bg-purple-600/50 filter blur-sm scale-110 animate-ring-pulse pointer-events-none"></div>
+                  )}
+                  {theme === "neon" && (
+                    <div className="absolute inset-0 rounded-full border border-pink-500 scale-105 animate-pulse pointer-events-none"></div>
+                  )}
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Preview avatar"
+                      className="w-16 h-16 rounded-full object-cover border border-white/20 shadow-sm relative z-10"
+                      onError={(e) => {
+                        (e.target as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-[#7C3AED] text-white flex items-center justify-center font-bold text-xl border border-white/20 shadow-sm relative z-10">
+                      {(displayName || "U")[0].toUpperCase()}
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-0.5">
                   <h4 className={`text-base font-extrabold truncate max-w-[200px] leading-tight ${mockupThemeStyles.text}`}>
                     {displayName || "Your Name"}
@@ -552,7 +576,7 @@ export const BioBuilder: React.FC = () => {
                   </p>
                 </div>
                 {bio && (
-                  <p className={`text-xs max-w-[220px] leading-snug line-clamp-3 ${mockupThemeStyles.bio}`}>
+                  <p className={`text-[11px] max-w-[220px] leading-snug line-clamp-3 ${mockupThemeStyles.bio}`}>
                     {bio}
                   </p>
                 )}
@@ -560,7 +584,7 @@ export const BioBuilder: React.FC = () => {
 
               {/* Social connect badges */}
               {(instagram || twitter || github || linkedin || youtube) && (
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-3 relative z-10">
                   {instagram && (
                     <span className={`transition-transform duration-200 ${mockupThemeStyles.social}`}>
                       <InstagramIcon />
@@ -590,7 +614,7 @@ export const BioBuilder: React.FC = () => {
               )}
 
               {/* Link Buttons Stack */}
-              <div className="space-y-3 flex-1">
+              <div className="space-y-3 flex-1 relative z-10">
                 {activeUrlItems.length === 0 ? (
                   <div className="h-full flex items-center justify-center text-center p-4">
                     <p className={`text-xs italic opacity-60 ${mockupThemeStyles.bio}`}>
@@ -601,19 +625,22 @@ export const BioBuilder: React.FC = () => {
                   activeUrlItems.map((url) => (
                     <div
                       key={url._id}
-                      className={`w-full py-2.5 px-4 rounded-2xl flex items-center justify-between text-xs transition-transform duration-200 truncate ${mockupThemeStyles.cardBg}`}
+                      className={`w-full py-2.5 px-4 rounded-2xl flex items-center justify-between text-xs transition-all duration-300 truncate ${mockupThemeStyles.cardBg}`}
                     >
-                      <span className="font-semibold truncate pr-2">
-                        {url.originalUrl.replace(/https?:\/\/(www\.)?/, "").split("/")[0]}
-                      </span>
-                      <span className="opacity-60 text-[10px]">/{url.shortCode}</span>
+                      <div className="flex items-center gap-1.5 truncate">
+                        {url.isProtected && <Lock className="w-3.5 h-3.5 opacity-70" />}
+                        <span className="font-bold truncate pr-2">
+                          {url.originalUrl.replace(/https?:\/\/(www\.)?/, "").split("/")[0]}
+                        </span>
+                      </div>
+                      <span className="opacity-80 text-[9px] font-bold">/{url.shortCode}</span>
                     </div>
                   ))
                 )}
               </div>
 
               {/* SecureLink Branding Badge */}
-              <div className="text-center pt-2 mt-auto">
+              <div className="text-center pt-2 mt-auto relative z-10">
                 <span className={`text-[8px] opacity-40 font-semibold tracking-wider uppercase ${mockupThemeStyles.text}`}>
                   Powered by SecureLink
                 </span>
